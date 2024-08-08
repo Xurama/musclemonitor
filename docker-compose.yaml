@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  front:
+    links:
+      - server
+    container_name: musclemonitor-front
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    env_file:
+      - ./front/.env.dev.local
+    ports:
+      - "8080:8080"
+
+  server:
+    links:
+      - db
+    container_name: musclemonitor-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/.env.dev.local
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mysql:8.0
+    container_name: musclemonitor-db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: musclemonitor
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - 3306:3306
+    volumes:
+      - db_musclemonitor_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: musclemonitor-pma
+    links:
+      - db
+    environment:
+      PMA_HOST: musclemonitor-db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+volumes:
+  db_musclemonitor_data:
