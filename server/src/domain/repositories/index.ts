@@ -2,6 +2,7 @@ import { ExerciseRepository, ExerciseRepositoryImpl } from "./exercise/exercise-
 import { MuscleGroupRepository, MuscleGroupRepositoryImpl } from "./muscleGroup/muscleGroup-repository";
 import { UserRepository, UserRepositoryImpl } from "./user/user-repository";
 import { WorkoutRepository, WorkoutRepositoryImpl } from "./workout/workout-repository";
+import { MuscleGroupTypeRepository, MuscleGroupTypeRepositoryImpl } from "./muscleGroup/muscleGroupType-repository";
 
 export {
   ExerciseRepository,
@@ -11,5 +12,7 @@ export {
   UserRepository,
   UserRepositoryImpl,
   WorkoutRepository,
-  WorkoutRepositoryImpl
+  WorkoutRepositoryImpl,
+  MuscleGroupTypeRepository,
+  MuscleGroupTypeRepositoryImpl
 };

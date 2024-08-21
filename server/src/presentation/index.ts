@@ -12,6 +12,7 @@ export type Repositories = {
   workoutRepository: Repositories.WorkoutRepository;
   exerciseRepository: Repositories.ExerciseRepository;
   muscleGroupRepository: Repositories.MuscleGroupRepository;
+  muscleGroupTypeRepository: Repositories.MuscleGroupTypeRepository;
 };
 
 export type UseCases = {
@@ -23,6 +24,10 @@ export type UseCases = {
   getExerciseByIdUseCase: UseCases.GetExerciseByIdUseCase;
   createMuscleGroupUseCase: UseCases.CreateMuscleGroupUseCase;
   getMuscleGroupByIdUseCase: UseCases.GetMuscleGroupByIdUseCase;
+  loginUserUseCase: UseCases.LoginUserUseCase;
+  muscleGroupType: UseCases.GetMuscleGroupTypesUseCase;
+  getMonthWorkoutDataUsecase: UseCases.GetWorkoutsByMonthUseCase;
+  getWorkoutByNameUseCase: UseCases.GetWorkoutByNameUseCase;
 };
 
 class RouterInjector {
@@ -38,6 +43,7 @@ class RouterInjector {
       workoutRepository: new Repositories.WorkoutRepositoryImpl(dataSources.mysqlDataSource),
       exerciseRepository: new Repositories.ExerciseRepositoryImpl(dataSources.mysqlDataSource),
       muscleGroupRepository: new Repositories.MuscleGroupRepositoryImpl(dataSources.mysqlDataSource),
+      muscleGroupTypeRepository: new Repositories.MuscleGroupTypeRepositoryImpl(dataSources.mysqlDataSource)
     };
   }
 
@@ -51,6 +57,10 @@ class RouterInjector {
       getExerciseByIdUseCase: new UseCases.GetExerciseByIdUseCaseImpl(repositories.exerciseRepository),
       createMuscleGroupUseCase: new UseCases.CreateMuscleGroupUseCaseImpl(repositories.muscleGroupRepository),
       getMuscleGroupByIdUseCase: new UseCases.GetMuscleGroupByIdUseCaseImpl(repositories.muscleGroupRepository),
+      loginUserUseCase: new UseCases.LoginUserUseCaseImpl(repositories.userRepository),
+      muscleGroupType: new UseCases.GetMuscleGroupTypesUseCaseImpl(repositories.muscleGroupTypeRepository),
+      getMonthWorkoutDataUsecase: new UseCases.GetWorkoutsByMonthUseCaseImpl(repositories.workoutRepository),
+      getWorkoutByNameUseCase: new UseCases.GetWorkoutByNameUseCaseImpl(repositories.workoutRepository)
     };
   }
 

@@ -12,6 +12,7 @@ export class CreateMuscleGroupUseCaseImpl implements CreateMuscleGroupUseCase {
   }
 
   async execute(muscleGroup: Entities.MuscleGroup): Promise<Entities.MuscleGroup> {
+    console.log(`usecase | createMuscleGroup(${muscleGroup})`);
     return await this.muscleGroupRepository.createMuscleGroup(muscleGroup);
   }
 }

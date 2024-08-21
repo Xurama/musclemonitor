@@ -41,6 +41,26 @@ import {
     GetWorkoutByIdUseCase,
     GetWorkoutByIdUseCaseImpl
   } from "@/domain/usecases/workout/get-workout";
+
+  import {
+    GetWorkoutByNameUseCase,
+    GetWorkoutByNameUseCaseImpl
+  } from "@/domain/usecases/workout/get-workout-name";
+
+  import {
+    LoginUserUseCase,
+    LoginUserUseCaseImpl
+  } from "@/domain/usecases/login/login";
+
+  import {
+    GetMuscleGroupTypesUseCase,
+    GetMuscleGroupTypesUseCaseImpl
+  } from "@/domain/usecases/muscleGroup/get-muscleGroupType";
+
+  import {
+    GetWorkoutsByMonthUseCase,
+    GetWorkoutsByMonthUseCaseImpl
+  } from "@/domain/usecases/workout/get-month-workouts";
   
   // Exportation des cas d'utilisation et de leurs implémentations
   export {
@@ -59,6 +79,14 @@ import {
     CreateWorkoutUseCase,
     CreateWorkoutUseCaseImpl,
     GetWorkoutByIdUseCase,
-    GetWorkoutByIdUseCaseImpl
+    GetWorkoutByIdUseCaseImpl,
+    LoginUserUseCase,
+    LoginUserUseCaseImpl,
+    GetMuscleGroupTypesUseCase,
+    GetMuscleGroupTypesUseCaseImpl,
+    GetWorkoutsByMonthUseCase,
+    GetWorkoutsByMonthUseCaseImpl,
+    GetWorkoutByNameUseCase,
+    GetWorkoutByNameUseCaseImpl
   };
   

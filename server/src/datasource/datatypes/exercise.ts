@@ -1,10 +1,21 @@
 export type ExerciseDb = {
-    id?: number;
-    workout_id: number;
-    name: string;
-    sets: number;
-    reps: number;
-    weight: number;
-    rest_time: number;
-  };
-  
+  id?: number;
+  workoutId: number;
+  name: string;
+  sets: number;
+  reps: RepsDb[];
+  weight: WeightDb[];
+  rest_time: RestTimeDb[];
+};
+
+export type RepsDb = {
+  reps: number;
+};
+
+export type WeightDb = {
+  weight: number;
+};
+
+export type RestTimeDb = {
+  rest_time: number;
+};

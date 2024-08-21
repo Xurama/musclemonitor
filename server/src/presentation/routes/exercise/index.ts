@@ -10,8 +10,9 @@ export default function ExerciseRouter(useCases: UseCases): Router {
   // Route pour créer un nouvel exercice
   const createExercise = async (req: Request, res: Response) => {
     try {
-      const { workoutId, name, sets, reps, weight, restTime } = req.body;
-      const response = await useCases.createExerciseUseCase.execute({ workoutId, name, sets, reps, weight, restTime });
+      console.log(`router | createExercise()`);
+      const { workoutId, name, sets, reps, weight, rest_time } = req.body;
+      const response = await useCases.createExerciseUseCase.execute({ workoutId, name, sets, reps, weight, rest_time });
       return RouterUtils.created(res, response);
     } catch (error) {
       return RouterUtils.error(error, res);
@@ -21,7 +22,11 @@ export default function ExerciseRouter(useCases: UseCases): Router {
   // Route pour récupérer un exercice par ID
   const getExerciseById = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      console.log(`router | getExerciseById()`);
+        const id = parseInt(req.params.id, 10);
+        if (isNaN(id)) {
+          return RouterUtils.badRequest(res);
+        }
       const response = await useCases.getExerciseByIdUseCase.execute(id);
       return RouterUtils.ok(res, response);
     } catch (error) {

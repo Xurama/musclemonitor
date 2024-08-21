@@ -15,24 +15,31 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async findById(id: number): Promise<Entities.User | null> {
+    console.log(`repository | getUserById(${id})`);
     const userData = await this.mysqlDataSource.findUserById(id);
-    return userData ? Converters.UserConverter.dbToDomain(userData) : null;
+    return userData;
   }
 
   async findByUsername(username: string): Promise<Entities.User | null> {
+    console.log(`repository | getUserByUsername(${username})`);
     const userData = await this.mysqlDataSource.findUserByUsername(username);
-    return userData ? Converters.UserConverter.dbToDomain(userData) : null;
+    console.log(`repository |post getUserByUsername => ${JSON.stringify(userData, null, 2)}`);
+    return userData;
   }
 
   async createUser(user: Entities.User): Promise<Entities.User> {
+    console.log(`repository | createUser(${user.username})`);
     const existingUser = await this.findByUsername(user.username);
     if (existingUser) {
       throw new Error("Username already taken");
     }
-  
-    const createdUserData = await this.mysqlDataSource.insertUser(
+
+    // Insert the user and get the query result
+    const result = await this.mysqlDataSource.insertUser(
       Converters.UserConverter.domainToDb(user)
     );
-    return { ...user, id: createdUserData.insertId };
+
+    // Return the user entity with the inserted ID
+    return { ...user, user_id: result.insertId };
   }
 }

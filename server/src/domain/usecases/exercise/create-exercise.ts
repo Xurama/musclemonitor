@@ -12,6 +12,7 @@ export class CreateExerciseUseCaseImpl implements CreateExerciseUseCase {
   }
 
   async execute(exercise: Entities.Exercise): Promise<Entities.Exercise> {
+    console.log(`usecase | createExercise(${exercise})`);
     return await this.exerciseRepository.createExercise(exercise);
   }
 }

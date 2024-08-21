@@ -1,6 +1,6 @@
 export type MuscleGroup = {
     id?: number;
-    workoutId: number;
+    workoutId?: number;
     name: string;
   };
   

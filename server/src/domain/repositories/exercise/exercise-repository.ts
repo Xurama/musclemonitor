@@ -14,12 +14,14 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   }
 
   async createExercise(exercise: Entities.Exercise): Promise<Entities.Exercise> {
+    console.log(`repository | createExercise(${exercise})`);
     const exerciseDb = Converters.ExerciseConverter.domainToDb(exercise);
     const result = await this.mysqlDataSource.insertExercise(exerciseDb);
     return { ...exercise, id: result.insertId };
   }
 
   async getExerciseById(id: number): Promise<Entities.Exercise | null> {
+    console.log(`repository | getExerciseById(${id})`);
     const exerciseData = await this.mysqlDataSource.findExerciseById(id);
     return exerciseData ? Converters.ExerciseConverter.dbToDomain(exerciseData) : null;
   }

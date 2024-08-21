@@ -1,3 +1,4 @@
+// src/domain/converters/UserConverter.ts
 import { AllowedSchema } from "express-json-validator-middleware";
 import { Entities } from "@/domain";
 import { DataTypes } from "@/datasource";
@@ -6,10 +7,21 @@ export class UserConverter {
   static createSchema(): AllowedSchema {
     return {
       type: "object",
-      required: ["username", "email", "password"],
+      required: ["username", "password"],
       properties: {
         username: { type: "string", minLength: 1 },
-        email: { type: "string", format: "email" },
+        password: { type: "string", minLength: 6 }
+      },
+      additionalProperties: false
+    };
+  }
+
+  static loginSchema(): AllowedSchema {
+    return {
+      type: "object",
+      required: ["username", "password"],
+      properties: {
+        username: { type: "string", minLength: 1 },
         password: { type: "string", minLength: 6 }
       },
       additionalProperties: false
@@ -29,19 +41,17 @@ export class UserConverter {
 
   static domainToDb(user: Entities.User): DataTypes.UserDb {
     return {
-      id: user.id,
+      user_id: user.user_id,
       username: user.username,
-      email: user.email,
-      password_hash: user.passwordHash
+      password: user.password
     };
   }
 
   static dbToDomain(user: DataTypes.UserDb): Entities.User {
     return {
-      id: user.id,
+      user_id: user.user_id,
       username: user.username,
-      email: user.email,
-      passwordHash: user.password_hash
+      password: user.password
     };
   }
 }

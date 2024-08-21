@@ -12,6 +12,7 @@ export class GetMuscleGroupByIdUseCaseImpl implements GetMuscleGroupByIdUseCase 
   }
 
   async execute(id: number): Promise<Entities.MuscleGroup | null> {
+    console.log(`usecase | getMuscleGroupById(${id})`);
     return await this.muscleGroupRepository.getMuscleGroupById(id);
   }
 }

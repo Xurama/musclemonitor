@@ -3,8 +3,21 @@ export type Exercise = {
     workoutId: number;
     name: string;
     sets: number;
-    reps: number;
-    weight: number;
-    restTime: number;
+    reps: Reps[];
+    weight: Weight[];
+    rest_time: RestTime[];
   };
+
+  export type Reps = {
+    reps: number;
+  }
+
+  export type Weight = {
+    weight: number;
+  };
+  
+  export type RestTime = {
+    rest_time: number;
+  };
+  
   

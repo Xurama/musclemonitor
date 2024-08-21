@@ -10,8 +10,12 @@ export default function MuscleGroupRouter(useCases: UseCases): Router {
   // Route pour créer un nouveau groupe musculaire
   const createMuscleGroup = async (req: Request, res: Response) => {
     try {
+      console.log(`router | createMuscleGroup()`);
       const { workoutId, name } = req.body;
-      const response = await useCases.createMuscleGroupUseCase.execute({ workoutId, name });
+      const response = await useCases.createMuscleGroupUseCase.execute({
+        workoutId,
+        name,
+      });
       return RouterUtils.created(res, response);
     } catch (error) {
       return RouterUtils.error(error, res);
@@ -21,7 +25,11 @@ export default function MuscleGroupRouter(useCases: UseCases): Router {
   // Route pour récupérer un groupe musculaire par ID
   const getMuscleGroupById = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      console.log(`router | getMuscleGroupById()`);
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        return RouterUtils.badRequest(res);
+      }
       const response = await useCases.getMuscleGroupByIdUseCase.execute(id);
       return RouterUtils.ok(res, response);
     } catch (error) {

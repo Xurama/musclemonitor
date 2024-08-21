@@ -12,6 +12,7 @@ export class GetUserByIdUseCaseImpl implements GetUserByIdUseCase {
   }
 
   async execute(id: number): Promise<Entities.User | null> {
+    console.log(`usecase | getUserById(${id})`);
     return await this.userRepository.findById(id);
   }
 }

@@ -1,10 +1,9 @@
-export const MidnightBlueDeep = "#00111C";
-export const DeepSeaBlue = "#001523";
-export const DarkNavyBlue = "#001A2C";
-export const NavyBlue = "#002137";
-export const DarkBlueNight = "#00253E";
-export const DeepOceanBlue = "#002945";
-export const DarkTealBlue = "#002E4E";
-export const TealBlue = "#003356";
-export const DarkCobaltBlue = "#003A61";
-export const CobaltBlue = "#00406C";
+export const colors = {
+    primary: "#3643BA",
+    secondary: "#7AFFA6",
+    background: "#F5F4F5",
+    text: "#101010",
+    white: "#FFFFFF",
+    error: "#FF4C4C"
+  };
+  

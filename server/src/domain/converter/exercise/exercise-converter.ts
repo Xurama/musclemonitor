@@ -6,14 +6,14 @@ export class ExerciseConverter {
   static createSchema(): AllowedSchema {
     return {
       type: "object",
-      required: ["workoutId", "name", "sets", "reps", "weight", "restTime"],
+      required: ["workoutId", "name", "sets", "reps", "weight", "rest_time"],
       properties: {
         workoutId: { type: "number" },
         name: { type: "string" },
         sets: { type: "number" },
         reps: { type: "number" },
         weight: { type: "number" },
-        restTime: { type: "number" }
+        rest_time: { type: "number" }
       },
       additionalProperties: false
     };
@@ -32,24 +32,24 @@ export class ExerciseConverter {
 
   static domainToDb(exercise: Entities.Exercise): DataTypes.ExerciseDb {
     return {
-      workout_id: exercise.workoutId,
+      workoutId: exercise.workoutId,
       name: exercise.name,
       sets: exercise.sets,
       reps: exercise.reps,
       weight: exercise.weight,
-      rest_time: exercise.restTime
+      rest_time: exercise.rest_time
     };
   }
 
   static dbToDomain(exercise: DataTypes.ExerciseDb): Entities.Exercise {
     return {
       id: exercise.id,
-      workoutId: exercise.workout_id,
+      workoutId: exercise.workoutId,
       name: exercise.name,
       sets: exercise.sets,
       reps: exercise.reps,
       weight: exercise.weight,
-      restTime: exercise.rest_time
+      rest_time: exercise.rest_time
     };
   }
 }

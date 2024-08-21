@@ -14,12 +14,14 @@ export class MuscleGroupRepositoryImpl implements MuscleGroupRepository {
   }
 
   async createMuscleGroup(muscleGroup: Entities.MuscleGroup): Promise<Entities.MuscleGroup> {
+    console.log(`repository | createMuscleGroup(${muscleGroup})`);
     const muscleGroupDb = Converters.MuscleGroupConverter.domainToDb(muscleGroup);
     const result = await this.mysqlDataSource.insertMuscleGroup(muscleGroupDb);
     return { ...muscleGroup, id: result.insertId };
   }
 
   async getMuscleGroupById(id: number): Promise<Entities.MuscleGroup | null> {
+    console.log(`repository | getMuscleGroupById(${id})`);
     const muscleGroupData = await this.mysqlDataSource.findMuscleGroupById(id);
     return muscleGroupData ? Converters.MuscleGroupConverter.dbToDomain(muscleGroupData) : null;
   }

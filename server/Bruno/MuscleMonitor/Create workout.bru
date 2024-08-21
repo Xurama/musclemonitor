@@ -1,0 +1,66 @@
+meta {
+  name: Create workout
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/v1/workouts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": 1,
+    "date": "2024-09-11",
+    "cardio": false,
+    "notes": "",
+    "exercises": [
+      {
+        "name": "Lat pull down",
+        "sets": 4,
+        "reps": [12, 10, 6, 6],
+        "weight": [39, 41, 41, 41],
+        "rest_time": [90,90,90,90]
+      },
+      {
+        "name": "Low row",
+        "sets": 4,
+        "reps": [12, 12, 8, 8],
+        "weight": [27, 32, 39, 39],
+        "rest_time": [60,60,60,60]
+      },
+      {
+        "name": "Face pulls machine",
+        "sets": 4,
+        "reps": [12, 9, 8, 8],
+        "weight": [39, 39, 39, 39],
+        "rest_time": [60,60,60,60]
+      },
+      {
+        "name": "Shrugs haltère",
+        "sets": 3,
+        "reps": [10, 10, 10],
+        "weight": [20, 20, 20],
+        "rest_time": [60,60,60,60]
+      },
+      {
+        "name": "Curl barre",
+        "sets": 3,
+        "reps": [10, 7],
+        "weight": [12, 14],
+        "rest_time": [60,60,60,60]
+      }
+    ],
+    "muscle_groups": [
+      {
+        "name": "dos"
+      },
+      {
+        "name": "biceps"
+      }
+    ]
+  }
+  
+}

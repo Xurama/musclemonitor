@@ -12,6 +12,7 @@ export class GetExerciseByIdUseCaseImpl implements GetExerciseByIdUseCase {
   }
 
   async execute(id: number): Promise<Entities.Exercise | null> {
+    console.log(`usecase | getExerciseById(${id})`);
     return await this.exerciseRepository.getExerciseById(id);
   }
 }
