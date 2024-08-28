@@ -1,22 +1,22 @@
 import styled from "styled-components";
 
 const sharedInputStyles = `
-  box-sizing: border-box; /* Ensures padding and borders are included in width/height */
-  width: 100%; /* Ensures the element takes up full width of the container */
+  box-sizing: border-box;
+  width: 100%;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-top: 5px;
-  max-width: 100%; /* Max-width to keep consistent sizing */
+  max-width: 100%;
 
   @media (max-width: 768px) {
     padding: 8px;
     font-size: 14px;
-    max-width: 100%; /* Allow full width on smaller screens */
+    max-width: 100%;
   }
 `;
- 
+
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -25,10 +25,11 @@ export const Form = styled.form`
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
 
   @media (max-width: 768px) {
-    padding: 10px;
     gap: 15px;
+    width: 90%;
   }
 `;
 
@@ -62,7 +63,7 @@ export const Button = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%; /* Ensure the button takes full width */
+  width: 100%;
 
   &:hover {
     background-color: #0056b3;
@@ -80,11 +81,12 @@ export const ExerciseContainer = styled.div`
   border-radius: 4px;
   margin-bottom: 20px;
   background-color: #f9f9f9;
-  width: 100%; /* Ensure the container takes full width */
+  width: 100%;
 
   @media (max-width: 768px) {
     padding: 8px;
     margin-bottom: 15px;
+    width: 95%;
   }
 `;
 
@@ -95,7 +97,7 @@ export const RepsContainer = styled.div`
 
   @media (max-width: 768px) {
     gap: 8px;
-    flex-direction: column; /* Stack the inputs vertically on small screens */
+    flex-direction: column;
   }
 `;
 
@@ -106,5 +108,33 @@ export const Label = styled.label`
 
   @media (max-width: 768px) {
     font-size: 12px;
+  }
+`;
+
+export const WorkoutList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+export const WorkoutButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  font-size: 16px;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background-color: #218838;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
+    font-size: 14px;
   }
 `;

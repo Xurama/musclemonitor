@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import Footer from "../../components/Footer";
 import YearlyStats from "../../components/YearlyStats";
 import SideMenu from "../../components/SideMenu";
+import Header from "../../components/Header";
 import { DashboardContainer, MainContent } from "./styles";
 
 const DashboardPage: React.FC = () => {
@@ -21,12 +22,11 @@ const DashboardPage: React.FC = () => {
 
   return (
     <DashboardContainer>
-      <SideMenu />
+      <Header />
       <MainContent>
-        <div style={{ padding: "20px" }}>
-          <YearlyStats />
-        </div>
+        <YearlyStats />
       </MainContent>
+      <Footer />
     </DashboardContainer>
   );
 };

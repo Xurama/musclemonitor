@@ -4,7 +4,6 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import SideMenu from "../../components/SideMenu";
 
 const RegisterPage: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -15,7 +14,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div>
-      <SideMenu />
+      <Header />
       <RegisterForm />
       <Footer />
     </div>

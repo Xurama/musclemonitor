@@ -1,10 +1,13 @@
 // styles.ts
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const CardWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 20px; /* Add some space between the cards */
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const InfoCardContainer = styled.div`

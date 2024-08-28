@@ -10,4 +10,9 @@ export const Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 768px) {
+    margin: 0px;
+    margin-bottom: 20px;
+  }
 `;

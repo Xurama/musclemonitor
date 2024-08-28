@@ -61,6 +61,11 @@ import {
     GetWorkoutsByMonthUseCase,
     GetWorkoutsByMonthUseCaseImpl
   } from "@/domain/usecases/workout/get-month-workouts";
+
+  import {
+    GetWorkoutsByUserIdUseCase,
+    GetWorkoutsByUserIdUseCaseImpl
+  } from "@/domain/usecases/workout/get-workout-by-id";
   
   // Exportation des cas d'utilisation et de leurs implémentations
   export {
@@ -87,6 +92,8 @@ import {
     GetWorkoutsByMonthUseCase,
     GetWorkoutsByMonthUseCaseImpl,
     GetWorkoutByNameUseCase,
-    GetWorkoutByNameUseCaseImpl
+    GetWorkoutByNameUseCaseImpl,
+    GetWorkoutsByUserIdUseCase,
+    GetWorkoutsByUserIdUseCaseImpl
   };
   

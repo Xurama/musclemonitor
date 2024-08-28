@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div>
-      <SideMenu />
+      <Header />
       <LoginForm />
       <Footer />
     </div>

@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import { api } from "../../core/api";
 import { MuscleGroupType } from "@/types/auth";
 import { Workout } from "@/types/workout";
+import Modal from "../Modal"; // Import Modal here
 import {
   Form,
   Input,
@@ -12,7 +13,15 @@ import {
   ExerciseContainer,
   RepsContainer,
   Label,
+  WorkoutList,
+  WorkoutButton,
 } from "./styles";
+
+// Utility function to format the date as DD/MM/YYYY
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("fr-FR");
+};
 
 const WorkoutForm: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -23,7 +32,7 @@ const WorkoutForm: React.FC = () => {
   const [muscleGroup2, setMuscleGroup2] = useState<string | null>(null);
   const [muscleGroup3, setMuscleGroup3] = useState<string | null>(null);
   const [cardio, setCardio] = useState(false);
-  const [includeExercises, setIncludeExercises] = useState(false); // Nouvelle case à cocher pour les exercices
+  const [includeExercises, setIncludeExercises] = useState(false);
   const [exercises, setExercises] = useState([
     { name: "", sets: 1, reps: [0], weight: [0], rest_time: [0] },
   ]);
@@ -32,8 +41,9 @@ const WorkoutForm: React.FC = () => {
   const [availableMuscleGroups, setAvailableMuscleGroups] = useState<
     MuscleGroupType[]
   >([]);
-  const [showLoadButton, setShowLoadButton] = useState(false);
-  const [previousWorkout, setPreviousWorkout] = useState<Workout | null>(null);
+  const [previousWorkouts, setPreviousWorkouts] = useState<Workout[]>([]);
+  const [notes, setNotes] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMuscleGroups = async () => {
@@ -45,45 +55,31 @@ const WorkoutForm: React.FC = () => {
       }
     };
 
+    const fetchPreviousWorkouts = async () => {
+      try {
+        const response = await api.get(
+          `/workouts/last?userId=${user?.user.user_id}`
+        );
+        setPreviousWorkouts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch previous workouts:", error);
+      }
+    };
+
     fetchMuscleGroups();
-  }, []);
+    fetchPreviousWorkouts();
+  }, [user?.user.user_id]);
 
-  useEffect(() => {
-    if (workoutName) {
-      const fetchPreviousWorkout = async () => {
-        try {
-          const response = await api.get(`/workouts/name?name=${workoutName}`);
-          if (response.data) {
-            setPreviousWorkout(response.data);
-            setShowLoadButton(true);
-          } else {
-            setShowLoadButton(false);
-          }
-        } catch (error) {
-          console.error("Failed to fetch previous workout:", error);
-        }
-      };
-
-      fetchPreviousWorkout();
-    } else {
-      setShowLoadButton(false);
-    }
-  }, [workoutName]);
-
-  const loadPreviousWorkout = () => {
-    if (previousWorkout) {
-      setExercises(previousWorkout.exercises);
-      setCardio(previousWorkout.cardio);
-      setIncludeExercises(previousWorkout.exercises.length > 0);
-      setCardioName(previousWorkout.cardio_exercises?.[0]?.name || "");
-      setActivityTime(
-        previousWorkout.cardio_exercises?.[0]?.activity_time || 0
-      );
-      setMuscleGroup1(previousWorkout.muscle_groups?.[0]?.name || null);
-      setMuscleGroup2(previousWorkout.muscle_groups?.[1]?.name || null);
-      setMuscleGroup3(previousWorkout.muscle_groups?.[2]?.name || null);
-      setShowLoadButton(false); // Hide the load button after loading the workout
-    }
+  const loadPreviousWorkout = (selectedWorkout: Workout) => {
+    setExercises(selectedWorkout.exercises);
+    setCardio(Boolean(selectedWorkout.cardio));
+    setIncludeExercises(selectedWorkout.exercises.length > 0);
+    setCardioName(selectedWorkout.cardio_exercises?.[0]?.name || "");
+    setActivityTime(selectedWorkout.cardio_exercises?.[0]?.activity_time || 0);
+    setMuscleGroup1(selectedWorkout.muscle_groups?.[0]?.name || null);
+    setMuscleGroup2(selectedWorkout.muscle_groups?.[1]?.name || null);
+    setMuscleGroup3(selectedWorkout.muscle_groups?.[2]?.name || null);
+    setIsModalOpen(false);
   };
 
   const handleAddExercise = () => {
@@ -166,13 +162,12 @@ const WorkoutForm: React.FC = () => {
               {
                 name: cardioName,
                 activity_time: activityTime,
+                notes: notes,
               },
             ]
           : [],
-        notes: workoutName, // Use workoutName instead of notes
+        name: workoutName,
       };
-
-      console.log("Workout:", workoutData);
 
       await api.post("/workouts", workoutData);
 
@@ -189,6 +184,7 @@ const WorkoutForm: React.FC = () => {
       ]);
       setCardioName("");
       setActivityTime(0);
+      setNotes("");
     } catch (error) {
       console.error("Failed to add workout:", error);
     }
@@ -197,6 +193,26 @@ const WorkoutForm: React.FC = () => {
   return (
     <Form onSubmit={handleAddWorkout}>
       <Title>Add a Workout</Title>
+      <Button type="button" onClick={() => setIsModalOpen(true)}>
+        Load Previous Workout
+      </Button>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h3>Select a Previous Workout</h3>
+        <WorkoutList>
+          {previousWorkouts.map((workout) => (
+            <li key={workout.id}>
+              <WorkoutButton
+                type="button"
+                onClick={() => loadPreviousWorkout(workout)}
+              >
+                {workout.name} - {formatDate(workout.date)}
+              </WorkoutButton>
+            </li>
+          ))}
+        </WorkoutList>
+      </Modal>
+
       <Input
         type="date"
         value={date}
@@ -211,12 +227,6 @@ const WorkoutForm: React.FC = () => {
         onChange={(e) => setWorkoutName(e.target.value)}
         required
       />
-
-      {showLoadButton && (
-        <Button type="button" onClick={loadPreviousWorkout}>
-          Load Previous Workout
-        </Button>
-      )}
 
       <Select
         value={muscleGroup1 !== null ? muscleGroup1 : ""}
@@ -400,6 +410,13 @@ const WorkoutForm: React.FC = () => {
             value={activityTime}
             onChange={(e) => setActivityTime(Number(e.target.value))}
             required
+          />
+
+          <Input
+            type="text"
+            placeholder="Notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
           />
         </>
       )}

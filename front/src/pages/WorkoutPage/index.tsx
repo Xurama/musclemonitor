@@ -1,17 +1,18 @@
 // src/pages/WorkoutPage.tsx
 import React from "react";
 import WorkoutForm from "../../components/WorkoutForm";
-import SideMenu from "../../components/SideMenu";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import { WorkoutPageContainer, MainContent } from "./styles";
 
 const WorkoutPage: React.FC = () => {
   return (
     <WorkoutPageContainer>
-      <SideMenu />
+      <Header />
       <MainContent>
-        <h1>Create a Workout</h1>
         <WorkoutForm />
       </MainContent>
+      <Footer />
     </WorkoutPageContainer>
   );
 };

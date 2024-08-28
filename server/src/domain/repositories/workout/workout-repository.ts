@@ -6,6 +6,7 @@ export interface WorkoutRepository {
   getWorkoutById: (id: number) => Promise<Entities.Workout | null>;
   getWorkoutsByMonth: (year: number, month: number) => Promise<Entities.Workout[]>;
   getWorkoutByName: (name: string) => Promise<Entities.Workout | null>;
+  getWorkoutsByUserId: (userId: number) => Promise<Entities.Workout[]>;
 }
 
 export class WorkoutRepositoryImpl implements WorkoutRepository {
@@ -19,9 +20,9 @@ export class WorkoutRepositoryImpl implements WorkoutRepository {
     const workoutDb = Converters.WorkoutConverter.domainToDb(workout);
     const result = await this.mysqlDataSource.insertWorkout(workoutDb);
 
-    const workoutId = result.id;
+    const workoutId = result.workout_id;
 
-    return { ...workout, id: workoutId };
+    return { ...workout, workout_id: workoutId };
   }
 
   async getWorkoutById(id: number): Promise<Entities.Workout | null> {
@@ -42,5 +43,11 @@ export class WorkoutRepositoryImpl implements WorkoutRepository {
     const workoutData = await this.mysqlDataSource.findWorkoutByName(name);
     console.log(`repository | getWorkoutByName(${name} :`, JSON.stringify(workoutData));
     return workoutData ? Converters.WorkoutConverter.dbToDomain(workoutData) : null;
+  }
+
+  async getWorkoutsByUserId(userId: number): Promise<Entities.Workout[]> {
+    console.log(`repository | getWorkoutsByUserId(${userId})`);
+    const workoutData = await this.mysqlDataSource.findWorkoutsByUserId(userId);
+    return workoutData.map(Converters.WorkoutConverter.dbToDomain);
   }
 }

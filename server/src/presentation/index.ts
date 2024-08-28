@@ -28,6 +28,7 @@ export type UseCases = {
   muscleGroupType: UseCases.GetMuscleGroupTypesUseCase;
   getMonthWorkoutDataUsecase: UseCases.GetWorkoutsByMonthUseCase;
   getWorkoutByNameUseCase: UseCases.GetWorkoutByNameUseCase;
+  getWorkoutsByUserIdUseCase: UseCases.GetWorkoutsByUserIdUseCase;
 };
 
 class RouterInjector {
@@ -60,7 +61,8 @@ class RouterInjector {
       loginUserUseCase: new UseCases.LoginUserUseCaseImpl(repositories.userRepository),
       muscleGroupType: new UseCases.GetMuscleGroupTypesUseCaseImpl(repositories.muscleGroupTypeRepository),
       getMonthWorkoutDataUsecase: new UseCases.GetWorkoutsByMonthUseCaseImpl(repositories.workoutRepository),
-      getWorkoutByNameUseCase: new UseCases.GetWorkoutByNameUseCaseImpl(repositories.workoutRepository)
+      getWorkoutByNameUseCase: new UseCases.GetWorkoutByNameUseCaseImpl(repositories.workoutRepository),
+      getWorkoutsByUserIdUseCase: new UseCases.GetWorkoutsByUserIdUseCaseImpl(repositories.workoutRepository)
     };
   }
 

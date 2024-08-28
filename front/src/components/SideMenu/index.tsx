@@ -1,14 +1,17 @@
-// src/components/SideMenu/index.tsx
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
 import {
-  MenuContainer,
   MenuItem,
+  Title,
   Username,
   LogoutButton,
   HamburgerIcon,
   MobileMenuOverlay,
+  ClosedSideBar,
+  OpenSideBar,
+  Separator,
+  Section,
 } from "./styles";
 
 const SideMenu: React.FC = () => {
@@ -19,41 +22,53 @@ const SideMenu: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate("/");
+    setIsOpen(false); // Close the menu after logout
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsOpen(false); // Close the menu after navigating
   };
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(!isOpen); // Toggle menu open/close state
   };
 
   return (
     <>
-      <HamburgerIcon onClick={toggleMenu}>
+      <HamburgerIcon $isOpen={isOpen} onClick={toggleMenu}>
         <span />
         <span />
         <span />
       </HamburgerIcon>
 
-      <MenuContainer isOpen={isOpen}>
-        {user && (
-          <>
-            <Username>{user.user.username}</Username>
-            <MenuItem onClick={() => navigate("/dashboard")}>
-              Dashboard
-            </MenuItem>
-            <MenuItem onClick={() => navigate("/workout")}>
-              Create Workout
-            </MenuItem>
-            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-          </>
-        )}
-        {!user && (
-          <>
-            <MenuItem onClick={() => navigate("/login")}>Login</MenuItem>
-            <MenuItem onClick={() => navigate("/register")}>Register</MenuItem>
-          </>
-        )}
-      </MenuContainer>
-      {isOpen && <MobileMenuOverlay onClick={toggleMenu} />}
+      {isOpen ? (
+        <>
+          <MobileMenuOverlay onClick={toggleMenu}>
+            <OpenSideBar onClick={(e) => e.stopPropagation()}>
+              <Title>MuscleMonitor</Title>
+              <Separator />
+              <Section>
+                <MenuItem onClick={() => handleNavigate("/dashboard")}>
+                  Dashboard
+                </MenuItem>
+                <MenuItem onClick={() => handleNavigate("/workout")}>
+                  Workout
+                </MenuItem>
+              </Section>
+              <Separator />
+              <Section>
+                {user && <Username>{user.user.username}</Username>}
+                <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+              </Section>
+            </OpenSideBar>
+          </MobileMenuOverlay>
+        </>
+      ) : (
+        <ClosedSideBar>
+          <span />
+        </ClosedSideBar>
+      )}
     </>
   );
 };

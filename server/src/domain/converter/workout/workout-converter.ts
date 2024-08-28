@@ -81,7 +81,7 @@ export class WorkoutConverter {
 
   static domainToDb(workout: Entities.Workout): DataTypes.WorkoutDb {
     return {
-      id: workout.id,
+      workout_id: workout.workout_id,
       userId: workout.userId,
       date: workout.date,
       cardio: workout.cardio,
@@ -90,21 +90,21 @@ export class WorkoutConverter {
       muscle_groups: workout.muscle_groups,
       cardio_exercises: workout.cardio_exercises.map((exercise) => ({
         ...exercise,
-        workoutId: workout.id, // Ajouter l'ID du workout
+        workoutId: workout.workout_id, // Ajouter l'ID du workout
       })),
     };
   }
 
   static dbToDomain(workoutDb: DataTypes.WorkoutDb): Entities.Workout {
     return {
-      id: workoutDb.id,
+      workout_id: workoutDb.workout_id,
       userId: workoutDb.userId,
       date: workoutDb.date,
       cardio: workoutDb.cardio,
       name: workoutDb.name,
       exercises: workoutDb.exercises.map((exercise: any) => ({
         name: exercise.name,
-        workoutId: workoutDb.id, 
+        workoutId: workoutDb.workout_id, 
         sets: exercise.sets,
         reps: exercise.reps, // Handle arrays for multiple sets
         weight: exercise.weight,
@@ -115,7 +115,7 @@ export class WorkoutConverter {
       })) || [],
       cardio_exercises: workoutDb.cardio_exercises.map((exercise: any) => ({
         name: exercise.name,
-        workoutId: workoutDb.id, 
+        workoutId: workoutDb.workout_id, 
         activity_time: exercise.activity_time,
         notes: exercise.notes,
       })) || [],

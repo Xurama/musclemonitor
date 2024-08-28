@@ -1,21 +1,27 @@
 // src/pages/HomePage.tsx
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { HomeContainer, ButtonContainer, ButtonLink } from "./styles";
-import SideMenu from "../../components/SideMenu";
+import { AuthContext } from "../../context/AuthProvider";
 
 const HomePage: React.FC = () => {
+  const { user } = useContext(AuthContext); // Accéder au contexte d'authentification
+
   return (
     <div>
-      <SideMenu />
+      <Header />
       <HomeContainer>
         <h1>Welcome to MuscleMonitor</h1>
         <p>Your personal workout tracker</p>
         <ButtonContainer>
-          <ButtonLink to="/login">Login</ButtonLink>
-          <ButtonLink to="/register">Register</ButtonLink>
+          {!user && (
+            <>
+              <ButtonLink to="/login">Login</ButtonLink>
+              <ButtonLink to="/register">Register</ButtonLink>
+            </>
+          )}
         </ButtonContainer>
       </HomeContainer>
       <Footer />

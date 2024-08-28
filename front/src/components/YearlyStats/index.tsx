@@ -1,35 +1,43 @@
 import React, { useState } from "react";
 import MonthlyStats from "../MonthlyStats";
+import { StatsContainer, Button, Title, Select } from "./styles";
 
 const YearlyStats: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-
-  const years = [2023, 2024]; // Vous pouvez dynamiser cela en fonction des données disponibles
+  const years = [2023, 2024];
 
   return (
-    <div>
-      <h2>Yearly Statistics</h2>
+    <StatsContainer>
+      <Title>Yearly Statistics</Title>
       <div>
-        {years.map((year) => (
-          <button
-            key={year}
-            onClick={() => setSelectedYear(year)}
-            style={{
-              backgroundColor: selectedYear === year ? "#61dafb" : "#282c34",
-              color: selectedYear === year ? "#282c34" : "white",
-              margin: "10px",
-              padding: "10px",
-              borderRadius: "5px",
-              border: "none",
-              cursor: "pointer",
-            }}
+        {window.innerWidth > 768 ? (
+          years.map((year) => (
+            <Button
+              key={year}
+              isSelected={selectedYear === year}
+              onClick={() => setSelectedYear(year)}
+            >
+              {year}
+            </Button>
+          ))
+        ) : (
+          <Select
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            value={selectedYear || ""}
           >
-            {year}
-          </button>
-        ))}
+            <option value="" disabled>
+              Select Year
+            </option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </Select>
+        )}
       </div>
       {selectedYear && <MonthlyStats year={selectedYear} />}
-    </div>
+    </StatsContainer>
   );
 };
 

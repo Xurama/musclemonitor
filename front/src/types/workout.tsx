@@ -1,6 +1,8 @@
 export type Workout = {
+    id: number;
     date: string;
     cardio: boolean;
+    name: string;
     exercises: Array<{
       name: string;
       sets: number;

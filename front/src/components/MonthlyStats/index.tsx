@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { months } from "../../types/month"; // Créez un fichier utils pour les mois
-import MonthDetails from "../MonthDetails"; // Un autre composant pour afficher les détails du mois
+import { months } from "../../types/month";
+import MonthDetails from "../MonthDetails";
+import { StatsContainer, Button, Title, Select } from "./styles";
 
 interface MonthlyStatsProps {
   year: number;
@@ -9,30 +10,38 @@ interface MonthlyStatsProps {
 const MonthlyStats: React.FC<MonthlyStatsProps> = ({ year }) => {
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const month = parseInt(e.target.value, 10);
+    setSelectedMonth(month);
+  };
+
   return (
-    <div>
-      <h3>Monthly Statistics for {year}</h3>
+    <StatsContainer>
+      <Title>Monthly Statistics for {year}</Title>
       <div>
-        {months.map((month, index) => (
-          <button
-            key={index}
-            onClick={() => setSelectedMonth(index)}
-            style={{
-              backgroundColor: selectedMonth === index ? "#61dafb" : "#282c34",
-              color: selectedMonth === index ? "#282c34" : "white",
-              margin: "10px",
-              padding: "10px",
-              borderRadius: "5px",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            {month}
-          </button>
-        ))}
+        {window.innerWidth > 768 ? (
+          months.map((month, index) => (
+            <Button
+              key={index}
+              isSelected={selectedMonth === index}
+              onClick={() => setSelectedMonth(index)}
+            >
+              {month}
+            </Button>
+          ))
+        ) : (
+          <Select onChange={handleMonthChange} value={selectedMonth || ""}>
+            <option value="" disabled>Select Month</option>
+            {months.map((month, index) => (
+              <option key={index} value={index}>
+                {month}
+              </option>
+            ))}
+          </Select>
+        )}
       </div>
       {selectedMonth !== null && <MonthDetails year={year} month={selectedMonth} />}
-    </div>
+    </StatsContainer>
   );
 };
 

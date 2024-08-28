@@ -1,29 +1,28 @@
-// src/pages/WorkoutPage/styles.tsx
 import styled from "styled-components";
 
 export const WorkoutPageContainer = styled.div`
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: #f4f4f9;
+  padding-top: 60px; /* Hauteur estimée du Header, ajustez si nécessaire */
 
   @media (max-width: 768px) {
-    flex-direction: column;
+    padding-top: 50px; /* Ajustez si le Header est plus petit sur mobile */
   }
 `;
 
 export const MainContent = styled.div`
-  margin-left: 200px; /* Adjusted to match the SideMenu width */
+  flex: 1;
   padding: 20px;
-  width: calc(100% - 200px);
-  background-color: #fff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-top: 20px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  padding-top: 30px;
 
   @media (max-width: 768px) {
-    margin-left: 0; /* Remove margin-left on small screens */
-    width: 100%; /* Full width on small screens */
-    padding: 10px;
-    margin-top: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 30px;
   }
 `;

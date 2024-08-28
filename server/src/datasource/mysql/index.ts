@@ -34,6 +34,8 @@ export interface MySQLDataSource {
   ): Promise<DataTypes.WorkoutDb[]>;
 
   findWorkoutByName(name: string): Promise<DataTypes.WorkoutDb | null>;
+
+  findWorkoutsByUserId(userId: number): Promise<DataTypes.WorkoutDb[]>;
 }
 
 export class MySQLDataSourceImpl implements MySQLDataSource {
@@ -84,7 +86,7 @@ export class MySQLDataSourceImpl implements MySQLDataSource {
     console.log(`datasource | createWorkout(${workout})`);
     const connection = await Builder.db();
     const [result] = await connection.query(
-      "INSERT INTO workouts (user_id, date, cardio, notes) VALUES (?, ?, ?, ?)",
+      "INSERT INTO workouts (user_id, date, cardio, name) VALUES (?, ?, ?, ?)",
       [workout.userId, workout.date, workout.cardio, workout.name]
     );
 
@@ -125,7 +127,7 @@ export class MySQLDataSourceImpl implements MySQLDataSource {
     }
 
     return {
-      id: workoutId,
+      workout_id: workoutId,
       userId: workout.userId,
       date: workout.date,
       cardio: workout.cardio,
@@ -417,10 +419,12 @@ export class MySQLDataSourceImpl implements MySQLDataSource {
     return null;
   }
 
-  async findExercisesByWorkoutId(workoutId: number): Promise<DataTypes.ExerciseDb[]> {
+  async findExercisesByWorkoutId(
+    workoutId: number
+  ): Promise<DataTypes.ExerciseDb[]> {
     console.log(`datasource | findExercisesByWorkoutId(${workoutId})`);
     const connection = await Builder.db();
-    
+
     const [exercises] = await connection.query(
       `SELECT e.exercise_id, e.name, e.sets,
               GROUP_CONCAT(DISTINCT r.reps ORDER BY r.set_number ASC SEPARATOR ',') AS reps,
@@ -434,40 +438,51 @@ export class MySQLDataSourceImpl implements MySQLDataSource {
        GROUP BY e.exercise_id`,
       [workoutId]
     );
-  
+
     return exercises.map((exercise: any) => {
-      const repsArray = exercise.reps ? exercise.reps.split(",").map(Number) : [];
-      const weightsArray = exercise.weights ? exercise.weights.split(",").map(Number) : [];
-      const restTimesArray = exercise.rest_times ? exercise.rest_times.split(",").map(Number) : [];
-  
+      const repsArray = exercise.reps
+        ? exercise.reps.split(",").map(Number)
+        : [];
+      const weightsArray = exercise.weights
+        ? exercise.weights.split(",").map(Number)
+        : [];
+      const restTimesArray = exercise.rest_times
+        ? exercise.rest_times.split(",").map(Number)
+        : [];
+
       // Ensure all arrays have the same length as sets
       const fillArray = (array: number[], length: number) => {
         if (array.length < length) {
-          return [...array, ...new Array(length - array.length).fill(array[array.length - 1])];
+          return [
+            ...array,
+            ...new Array(length - array.length).fill(array[array.length - 1]),
+          ];
         }
         return array;
       };
-  
+
       const sets = exercise.sets;
       const reps = fillArray(repsArray, sets);
       const weight = fillArray(weightsArray, sets);
       const rest_time = fillArray(restTimesArray, sets);
-  
+
       return {
         exercise_id: exercise.exercise_id,
         name: exercise.name,
         sets: sets,
         reps: reps,
         weight: weight,
-        rest_time: rest_time
+        rest_time: rest_time,
       };
     });
   }
 
-  async findMuscleGroupsByWorkoutId(workoutId: number): Promise<DataTypes.MuscleGroupDb[]> {
+  async findMuscleGroupsByWorkoutId(
+    workoutId: number
+  ): Promise<DataTypes.MuscleGroupDb[]> {
     console.log(`datasource | findMuscleGroupsByWorkoutId(${workoutId})`);
     const connection = await Builder.db();
-    
+
     const [muscleGroups] = await connection.query(
       `SELECT mg.muscle_group_id, mgt.name AS muscle_group_name
        FROM muscle_groups mg
@@ -475,32 +490,74 @@ export class MySQLDataSourceImpl implements MySQLDataSource {
        WHERE mg.workout_id = ?`,
       [workoutId]
     );
-  
+
     return muscleGroups.map((mg: any) => ({
       muscle_group_id: mg.muscle_group_id,
-      name: mg.muscle_group_name
+      name: mg.muscle_group_name,
     }));
   }
 
-  async findCardioExercisesByWorkoutId(workoutId: number): Promise<DataTypes.CardioExerciseDb[]> {
+  async findCardioExercisesByWorkoutId(
+    workoutId: number
+  ): Promise<DataTypes.CardioExerciseDb[]> {
     console.log(`datasource | findCardioExercisesByWorkoutId(${workoutId})`);
     const connection = await Builder.db();
-    
+
     const [cardioExercises] = await connection.query(
       `SELECT ce.id, ce.name, ce.activity_time, ce.notes
        FROM cardio_exercises ce
        WHERE ce.workout_id = ?`,
       [workoutId]
     );
-  
+
     return cardioExercises.map((ce: any) => ({
       cardio_exercise_id: ce.cardio_exercise_id,
       name: ce.name,
       activity_time: ce.activity_time,
-      notes: ce.notes
+      notes: ce.notes,
     }));
   }
-  
-  
-  
+
+  async findWorkoutsByUserId(userId: number): Promise<DataTypes.WorkoutDb[]> {
+    console.log(`datasource | findWorkoutsByUserId(${userId})`);
+    const connection = await Builder.db();
+    const [workouts] = await connection.query(
+      "SELECT * FROM workouts WHERE user_id = ?",
+      [userId]
+    );
+
+    console.log("workout", workouts);
+
+    const enrichedWorkouts = await Promise.all(
+      workouts.map(async (workout: any) => {
+        // Fetch exercises for the workout
+        const exercises = await this.findExercisesByWorkoutId(
+          workout.workout_id
+        );
+
+        // Fetch muscle groups for the workout
+        const muscleGroups = await this.findMuscleGroupsByWorkoutId(
+          workout.workout_id
+        );
+
+        // Fetch cardio exercises for the workout
+        const cardioExercises = await this.findCardioExercisesByWorkoutId(
+          workout.workout_id
+        );
+
+        console.log("exercices", exercises);
+        console.log("musclegroups", muscleGroups);
+        console.log("cardioExercises", cardioExercises);
+
+        return {
+          ...workout,
+          exercises: exercises || [],
+          muscle_groups: muscleGroups || [],
+          cardio_exercises: cardioExercises || [],
+        };
+      })
+    );
+
+    return enrichedWorkouts;
+  }
 }

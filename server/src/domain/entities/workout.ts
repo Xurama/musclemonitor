@@ -3,7 +3,7 @@ import { MuscleGroup } from "./muscleGroup";
 import { CardioExercise } from "./cardioExercise";  // Ajout du type pour les exercices de cardio
 
 export type Workout = {
-  id?: number;          // Optional ID, as it is set upon creation
+  workout_id: number;          // Optional ID, as it is set upon creation
   userId?: number;
   date: string;
   cardio: boolean;

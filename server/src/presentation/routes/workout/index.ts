@@ -14,6 +14,7 @@ export default function WorkoutRouter(useCases: UseCases): Router {
 
       // Déstructuration du corps de la requête
       const {
+        workout_id,
         userId,
         date,
         cardio,
@@ -25,6 +26,7 @@ export default function WorkoutRouter(useCases: UseCases): Router {
 
       // Appel à la méthode de création avec l'objet complet
       const response = await useCases.createWorkoutUseCase.execute({
+        workout_id,
         userId,
         date,
         cardio,
@@ -103,6 +105,24 @@ export default function WorkoutRouter(useCases: UseCases): Router {
     }
   };
 
+  const getWorkoutsByUserId = async (req: Request, res: Response) => {
+    try {
+      console.log(`router | getWorkoutsByUserId()`);
+      const userId = parseInt(req.query.userId as string, 10);
+      if (isNaN(userId)) {
+        return RouterUtils.badRequest(res);
+      }
+  
+      const response = await useCases.getWorkoutsByUserIdUseCase.execute(userId);
+      return RouterUtils.ok(res, response);
+    } catch (error) {
+      return RouterUtils.error(error, res);
+    }
+  };
+  
+
+  
+
   const workoutRouter = express.Router({ mergeParams: true });
 
   workoutRouter.post(
@@ -120,6 +140,8 @@ export default function WorkoutRouter(useCases: UseCases): Router {
   workoutRouter.get("/month", getWorkoutsByMonth);
 
   workoutRouter.get("/name", getWorkoutByName); // Added this line
+
+  workoutRouter.get("/last", getWorkoutsByUserId);
 
   workoutRouter.get(
     "/:id",
