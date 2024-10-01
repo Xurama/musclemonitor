@@ -24,5 +24,6 @@ export const MainContent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding-top: 35px;
   }
 `;

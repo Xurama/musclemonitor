@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardWrapper, InfoCardContainer, ChartCardContainer } from './styles';
+import { CardWrapper } from './styles';
 
 interface CardsContainerProps {
   children: React.ReactNode;

@@ -1,16 +1,15 @@
-// src/pages/HomePage.tsx
+// src/pages/HomePage/index.tsx
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { HomeContainer, ButtonContainer, ButtonLink } from "./styles";
+import { HomeContainer, ButtonContainer, ButtonLink, PageContainer } from "./styles"; // Import du nouveau style
 import { AuthContext } from "../../context/AuthProvider";
 
 const HomePage: React.FC = () => {
-  const { user } = useContext(AuthContext); // Accéder au contexte d'authentification
+  const { user } = useContext(AuthContext);
 
   return (
-    <div>
+    <PageContainer> {/* Utilisation du nouveau conteneur */}
       <Header />
       <HomeContainer>
         <h1>Welcome to MuscleMonitor</h1>
@@ -25,7 +24,7 @@ const HomePage: React.FC = () => {
         </ButtonContainer>
       </HomeContainer>
       <Footer />
-    </div>
+    </PageContainer>
   );
 };
 

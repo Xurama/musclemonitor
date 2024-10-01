@@ -17,6 +17,7 @@ export class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   async createWorkout(workout: Entities.Workout): Promise<Entities.Workout> {
+    console.log(`repository | getWorkoutById(${JSON.stringify(workout)})`);
     const workoutDb = Converters.WorkoutConverter.domainToDb(workout);
     const result = await this.mysqlDataSource.insertWorkout(workoutDb);
 

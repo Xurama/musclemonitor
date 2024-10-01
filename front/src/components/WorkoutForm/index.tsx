@@ -3,7 +3,8 @@ import { AuthContext } from "../../context/AuthProvider";
 import { api } from "../../core/api";
 import { MuscleGroupType } from "@/types/auth";
 import { Workout } from "@/types/workout";
-import Modal from "../Modal"; // Import Modal here
+import Modal from "../Modal";
+import { FaDumbbell } from "react-icons/fa";
 import {
   Form,
   Input,
@@ -28,9 +29,7 @@ const WorkoutForm: React.FC = () => {
 
   const [date, setDate] = useState("");
   const [workoutName, setWorkoutName] = useState("");
-  const [muscleGroup1, setMuscleGroup1] = useState<string | null>(null);
-  const [muscleGroup2, setMuscleGroup2] = useState<string | null>(null);
-  const [muscleGroup3, setMuscleGroup3] = useState<string | null>(null);
+  const [muscleGroups, setMuscleGroups] = useState<string[]>([]);
   const [cardio, setCardio] = useState(false);
   const [includeExercises, setIncludeExercises] = useState(false);
   const [exercises, setExercises] = useState([
@@ -38,9 +37,7 @@ const WorkoutForm: React.FC = () => {
   ]);
   const [cardioName, setCardioName] = useState("");
   const [activityTime, setActivityTime] = useState(0);
-  const [availableMuscleGroups, setAvailableMuscleGroups] = useState<
-    MuscleGroupType[]
-  >([]);
+  const [availableMuscleGroups, setAvailableMuscleGroups] = useState<MuscleGroupType[]>([]);
   const [previousWorkouts, setPreviousWorkouts] = useState<Workout[]>([]);
   const [notes, setNotes] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,9 +54,7 @@ const WorkoutForm: React.FC = () => {
 
     const fetchPreviousWorkouts = async () => {
       try {
-        const response = await api.get(
-          `/workouts/last?userId=${user?.user.user_id}`
-        );
+        const response = await api.get(`/workouts/last?userId=${user?.user.user_id}`);
         setPreviousWorkouts(response.data);
       } catch (error) {
         console.error("Failed to fetch previous workouts:", error);
@@ -76,9 +71,7 @@ const WorkoutForm: React.FC = () => {
     setIncludeExercises(selectedWorkout.exercises.length > 0);
     setCardioName(selectedWorkout.cardio_exercises?.[0]?.name || "");
     setActivityTime(selectedWorkout.cardio_exercises?.[0]?.activity_time || 0);
-    setMuscleGroup1(selectedWorkout.muscle_groups?.[0]?.name || null);
-    setMuscleGroup2(selectedWorkout.muscle_groups?.[1]?.name || null);
-    setMuscleGroup3(selectedWorkout.muscle_groups?.[2]?.name || null);
+    setMuscleGroups(selectedWorkout.muscle_groups.map(group => group.name));
     setIsModalOpen(false);
   };
 
@@ -108,6 +101,10 @@ const WorkoutForm: React.FC = () => {
     } else if (field.startsWith("reps")) {
       const repIndex = Number(field.split("-")[1]);
       const newReps = [...updatedExercises[index].reps];
+      if (Number(value) < 0) {
+        alert("Reps cannot be negative");
+        return;
+      }
       newReps[repIndex] = Number(value);
       updatedExercises[index] = {
         ...updatedExercises[index],
@@ -116,6 +113,10 @@ const WorkoutForm: React.FC = () => {
     } else if (field.startsWith("weight")) {
       const weightIndex = Number(field.split("-")[1]);
       const newWeights = [...updatedExercises[index].weight];
+      if (Number(value) < 0) {
+        alert("Weight cannot be negative");
+        return;
+      }
       newWeights[weightIndex] = Number(value);
       updatedExercises[index] = {
         ...updatedExercises[index],
@@ -125,6 +126,10 @@ const WorkoutForm: React.FC = () => {
       const restTimeIndex = Number(field.split("-")[1]);
       const newRestTimes = [...updatedExercises[index].rest_time];
       newRestTimes[restTimeIndex] = Number(value);
+      if (Number(value) < 0) {
+        alert("Rest Time cannot be negative");
+        return;
+      }
       updatedExercises[index] = {
         ...updatedExercises[index],
         rest_time: newRestTimes,
@@ -147,14 +152,10 @@ const WorkoutForm: React.FC = () => {
   const handleAddWorkout = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const muscleGroups = [muscleGroup1, muscleGroup2, muscleGroup3]
-        .filter((group) => group !== null)
-        .map((group) => ({ name: group! }));
-
       const workoutData = {
         userId: user?.user.user_id,
         date,
-        muscle_groups: muscleGroups,
+        muscle_groups: muscleGroups.map(name => ({ name })),
         cardio,
         exercises: includeExercises ? exercises : [],
         cardio_exercises: cardio
@@ -169,22 +170,22 @@ const WorkoutForm: React.FC = () => {
         name: workoutName,
       };
 
-      await api.post("/workouts", workoutData);
+      const response = await api.post("/workouts", workoutData);
 
-      // Reset form fields
+      const newWorkout = { ...workoutData, id: response.data.id };
+      setPreviousWorkouts([...previousWorkouts, newWorkout]);
+
       setDate("");
       setWorkoutName("");
-      setMuscleGroup1(null);
-      setMuscleGroup2(null);
-      setMuscleGroup3(null);
+      setMuscleGroups([]);
       setCardio(false);
       setIncludeExercises(false);
-      setExercises([
-        { name: "", sets: 1, reps: [0], weight: [0], rest_time: [0] },
-      ]);
+      setExercises([{ name: "", sets: 1, reps: [0], weight: [0], rest_time: [0] }]);
       setCardioName("");
       setActivityTime(0);
       setNotes("");
+
+      alert("Entrainement ajouté");
     } catch (error) {
       console.error("Failed to add workout:", error);
     }
@@ -193,19 +194,14 @@ const WorkoutForm: React.FC = () => {
   return (
     <Form onSubmit={handleAddWorkout}>
       <Title>Add a Workout</Title>
-      <Button type="button" onClick={() => setIsModalOpen(true)}>
-        Load Previous Workout
-      </Button>
+      <Button type="button" onClick={() => setIsModalOpen(true)}>Load Previous Workout</Button>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h3>Select a Previous Workout</h3>
         <WorkoutList>
           {previousWorkouts.map((workout) => (
             <li key={workout.id}>
-              <WorkoutButton
-                type="button"
-                onClick={() => loadPreviousWorkout(workout)}
-              >
+              <WorkoutButton type="button" onClick={() => loadPreviousWorkout(workout)}>
                 {workout.name} - {formatDate(workout.date)}
               </WorkoutButton>
             </li>
@@ -213,80 +209,46 @@ const WorkoutForm: React.FC = () => {
         </WorkoutList>
       </Modal>
 
-      <Input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        required
-      />
+      <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+      <Input type="text" placeholder="Workout Name" value={workoutName} onChange={(e) => setWorkoutName(e.target.value)} required />
 
-      <Input
-        type="text"
-        placeholder="Workout Name"
-        value={workoutName}
-        onChange={(e) => setWorkoutName(e.target.value)}
-        required
-      />
-
-      <Select
-        value={muscleGroup1 !== null ? muscleGroup1 : ""}
-        onChange={(e) => setMuscleGroup1(e.target.value || null)}
-      >
-        <option value="" disabled>
-          Select Muscle Group 1
-        </option>
+      <Select multiple value={muscleGroups} onChange={(e) => setMuscleGroups(Array.from(e.target.selectedOptions, option => option.value))}>
         {availableMuscleGroups.map((group) => (
-          <option key={`muscle-group-${group.name}`} value={group.name}>
-            {group.name}
+          <option key={group.name} value={group.name}>
+            <FaDumbbell /> {group.name}
           </option>
         ))}
       </Select>
 
-      <Select
-        value={muscleGroup2 !== null ? muscleGroup2 : ""}
-        onChange={(e) => setMuscleGroup2(e.target.value || null)}
-      >
-        <option value="" disabled>
-          Select Muscle Group 2
-        </option>
-        {availableMuscleGroups.map((group) => (
-          <option key={`muscle-group-${group.name}`} value={group.name}>
-            {group.name}
-          </option>
-        ))}
-      </Select>
+      <div>
+        <button
+          type="button"
+          onClick={() => setCardio(!cardio)}
+          style={{
+            backgroundColor: cardio ? "green" : "grey",
+            color: "white",
+            padding: "10px",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {cardio ? "Cardio: ON" : "Cardio: OFF"}
+        </button>
 
-      <Select
-        value={muscleGroup3 !== null ? muscleGroup3 : ""}
-        onChange={(e) => setMuscleGroup3(e.target.value || null)}
-      >
-        <option value="" disabled>
-          Select Muscle Group 3
-        </option>
-        {availableMuscleGroups.map((group) => (
-          <option key={`muscle-group-${group.name}`} value={group.name}>
-            {group.name}
-          </option>
-        ))}
-      </Select>
-
-      <label>
-        Cardio:
-        <input
-          type="checkbox"
-          checked={cardio}
-          onChange={(e) => setCardio(e.target.checked)}
-        />
-      </label>
-
-      <label>
-        Exercises:
-        <input
-          type="checkbox"
-          checked={includeExercises}
-          onChange={(e) => setIncludeExercises(e.target.checked)}
-        />
-      </label>
+        <button
+          type="button"
+          onClick={() => setIncludeExercises(!includeExercises)}
+          style={{
+            backgroundColor: includeExercises ? "green" : "grey",
+            color: "white",
+            padding: "10px",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {includeExercises ? "Exercises: ON" : "Exercises: OFF"}
+        </button>
+      </div>
 
       {includeExercises && (
         <>
@@ -296,22 +258,24 @@ const WorkoutForm: React.FC = () => {
               <Label>Exercise Name</Label>
               <Input
                 type="text"
+                list="exercise-names"
                 placeholder="Exercise Name"
                 value={exercise.name}
-                onChange={(e) =>
-                  handleExerciseChange(index, "name", e.target.value)
-                }
+                onChange={(e) => handleExerciseChange(index, "name", e.target.value)}
                 required
               />
+              <datalist id="exercise-names">
+                <option value="Bench Press" />
+                <option value="Squat" />
+                <option value="Deadlift" />
+              </datalist>
 
               <Label>Number of Sets</Label>
               <Input
                 type="number"
                 placeholder="Sets"
                 value={exercise.sets}
-                onChange={(e) =>
-                  handleExerciseChange(index, "sets", Number(e.target.value))
-                }
+                onChange={(e) => handleExerciseChange(index, "sets", Number(e.target.value))}
                 required
               />
 
@@ -323,13 +287,7 @@ const WorkoutForm: React.FC = () => {
                     type="number"
                     placeholder={`Set ${repIndex + 1}`}
                     value={exercise.reps[repIndex]}
-                    onChange={(e) =>
-                      handleExerciseChange(
-                        index,
-                        `reps-${repIndex}`,
-                        Number(e.target.value)
-                      )
-                    }
+                    onChange={(e) => handleExerciseChange(index, `reps-${repIndex}`, Number(e.target.value))}
                     required
                   />
                 ))}
@@ -343,13 +301,7 @@ const WorkoutForm: React.FC = () => {
                     type="number"
                     placeholder={`Weight Set ${weightIndex + 1}`}
                     value={exercise.weight[weightIndex]}
-                    onChange={(e) =>
-                      handleExerciseChange(
-                        index,
-                        `weight-${weightIndex}`,
-                        Number(e.target.value)
-                      )
-                    }
+                    onChange={(e) => handleExerciseChange(index, `weight-${weightIndex}`, Number(e.target.value))}
                     required
                   />
                 ))}
@@ -357,39 +309,24 @@ const WorkoutForm: React.FC = () => {
 
               <Label>Rest Time for Each Set (seconds)</Label>
               <RepsContainer>
-                {Array.from({ length: exercise.sets }).map(
-                  (_, restTimeIndex) => (
-                    <Input
-                      key={`rest_time-${restTimeIndex}`}
-                      type="number"
-                      placeholder={`Rest Time Set ${restTimeIndex + 1}`}
-                      value={exercise.rest_time[restTimeIndex]}
-                      onChange={(e) =>
-                        handleExerciseChange(
-                          index,
-                          `rest_time-${restTimeIndex}`,
-                          Number(e.target.value)
-                        )
-                      }
-                      required
-                    />
-                  )
-                )}
+                {Array.from({ length: exercise.sets }).map((_, restTimeIndex) => (
+                  <Input
+                    key={`rest_time-${restTimeIndex}`}
+                    type="number"
+                    placeholder={`Rest Time Set ${restTimeIndex + 1}`}
+                    value={exercise.rest_time[restTimeIndex]}
+                    onChange={(e) => handleExerciseChange(index, `rest_time-${restTimeIndex}`, Number(e.target.value))}
+                    required
+                  />
+                ))}
               </RepsContainer>
 
               {exercises.length > 1 && (
-                <Button
-                  type="button"
-                  onClick={() => handleRemoveExercise(index)}
-                >
-                  Remove Exercise
-                </Button>
+                <Button type="button" onClick={() => handleRemoveExercise(index)}>Remove Exercise</Button>
               )}
             </ExerciseContainer>
           ))}
-          <Button type="button" onClick={handleAddExercise}>
-            Add Another Exercise
-          </Button>
+          <Button type="button" onClick={handleAddExercise}>Add Another Exercise</Button>
         </>
       )}
 

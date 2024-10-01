@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { colors } from "../../styles/colors";
 
 const sharedInputStyles = `
   box-sizing: border-box;
@@ -25,7 +26,8 @@ export const Form = styled.form`
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 97%;
+  margin: 0 auto; /* Centrer le formulaire */
 
   @media (max-width: 768px) {
     gap: 15px;
@@ -59,7 +61,7 @@ export const Button = styled.button`
   padding: 10px 15px;
   font-size: 16px;
   color: #fff;
-  background-color: #007bff;
+  background-color: ${colors.primary};
   border: none;
   border-radius: 4px;
   cursor: pointer;

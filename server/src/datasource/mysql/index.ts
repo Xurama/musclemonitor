@@ -83,59 +83,65 @@ export class MySQLDataSourceImpl implements MySQLDataSource {
 
   // Workout methods
   async insertWorkout(workout: Entities.Workout): Promise<DataTypes.WorkoutDb> {
-    console.log(`datasource | createWorkout(${workout})`);
-    const connection = await Builder.db();
-    const [result] = await connection.query(
-      "INSERT INTO workouts (user_id, date, cardio, name) VALUES (?, ?, ?, ?)",
-      [workout.userId, workout.date, workout.cardio, workout.name]
-    );
+    console.log(`datasource | createWorkout(${JSON.stringify(workout)})`);
 
-    const workoutId = result.insertId;
+    try {
+      const connection = await Builder.db();
+      const [result] = await connection.query(
+        "INSERT INTO workouts (user_id, date, cardio, name) VALUES (?, ?, ?, ?)",
+        [workout.userId, workout.date, workout.cardio, workout.name]
+      );
 
-    // Ajout des exercices associés au workout
-    for (const exercise of workout.exercises) {
-      await this.insertExercise({
-        workoutId: workoutId,
-        ...exercise,
-      });
+      const workoutId = result.insertId;
+
+      // Ajout des exercices associés au workout
+      for (const exercise of workout.exercises) {
+        await this.insertExercise({
+          workoutId: workoutId,
+          ...exercise,
+        });
+      }
+
+      // Ajout des groupes musculaires associés au workout
+      for (const muscleGroup of workout.muscle_groups) {
+        await this.insertMuscleGroup({
+          workoutId: workoutId,
+          ...muscleGroup,
+        });
+      }
+
+      // Ajout des exercices cardio associés au workout
+      const cardioExercises = [];
+      for (const cardioExercise of workout.cardio_exercises) {
+        const result = await this.insertCardioExercise({
+          workoutId: workoutId,
+          name: cardioExercise.name,
+          activity_time: cardioExercise.activity_time,
+          notes: cardioExercise.notes,
+        });
+        cardioExercises.push({
+          id: result.insertId,
+          workoutId: workoutId,
+          name: cardioExercise.name,
+          activity_time: cardioExercise.activity_time,
+          notes: cardioExercise.notes,
+        });
+      }
+
+      return {
+        workout_id: workoutId,
+        userId: workout.userId,
+        date: workout.date,
+        cardio: workout.cardio,
+        name: workout.name,
+        exercises: workout.exercises,
+        muscle_groups: workout.muscle_groups,
+        cardio_exercises: cardioExercises,
+      };
+    } catch (error) {
+      console.error("Database error during workout insertion: ", error);
+      throw error;
     }
-
-    // Ajout des groupes musculaires associés au workout
-    for (const muscleGroup of workout.muscle_groups) {
-      await this.insertMuscleGroup({
-        workoutId: workoutId,
-        ...muscleGroup,
-      });
-    }
-
-    // Ajout des exercices cardio associés au workout
-    const cardioExercises = [];
-    for (const cardioExercise of workout.cardio_exercises) {
-      const result = await this.insertCardioExercise({
-        workoutId: workoutId,
-        name: cardioExercise.name,
-        activity_time: cardioExercise.activity_time,
-        notes: cardioExercise.notes,
-      });
-      cardioExercises.push({
-        id: result.insertId,
-        workoutId: workoutId,
-        name: cardioExercise.name,
-        activity_time: cardioExercise.activity_time,
-        notes: cardioExercise.notes,
-      });
-    }
-
-    return {
-      workout_id: workoutId,
-      userId: workout.userId,
-      date: workout.date,
-      cardio: workout.cardio,
-      name: workout.name,
-      exercises: workout.exercises,
-      muscle_groups: workout.muscle_groups,
-      cardio_exercises: cardioExercises,
-    };
   }
 
   async findWorkoutById(id: number): Promise<DataTypes.WorkoutDb | null> {

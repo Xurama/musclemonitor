@@ -21,6 +21,7 @@ export const HeaderContainer = styled.header`
 export const Title = styled.h1`
   font-size: 24px;
   color: #fff;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     font-size: 20px;
@@ -84,6 +85,28 @@ export const UsernameContainer = styled.div`
   @media (max-width: 768px) {
     display: none;
   }
+`;
+
+export const LogoutButton = styled.button`
+  background-color: ${colors.secondary};
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${colors.primary};
+  }
+`;
+
+export const LanguageSelect = styled.select`
+  background-color: ${colors.primary};
+  border: 1px solid #fff;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 14px;
 `;
 
 export const HamburgerIcon = styled.div<HamburgerIconProps>`

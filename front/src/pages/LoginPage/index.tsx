@@ -1,10 +1,11 @@
+// src/pages/LoginPage/index.tsx
 import React from "react";
 import LoginForm from "../../components/LoginForm";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import SideMenu from "../../components/SideMenu";
+import { PageContainer, ContentContainer } from "./styles";
 
 const LoginPage: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -14,11 +15,13 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <PageContainer>
       <Header />
-      <LoginForm />
+      <ContentContainer>
+        <LoginForm />
+      </ContentContainer>
       <Footer />
-    </div>
+    </PageContainer>
   );
 };
 

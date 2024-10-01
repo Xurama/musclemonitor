@@ -12,41 +12,58 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Ajouter l'état de chargement
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('AuthProvider: Checking for saved user in localStorage');
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
+      console.log('AuthProvider: User found in localStorage', JSON.parse(savedUser));
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false); // Indiquer que le chargement est terminé
+    setLoading(false);
   }, []);
 
   const login = async (username: string, password: string) => {
-    const response = await api.post('/users/login', { username, password });
-    const user = response.data;
-    setUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
-    navigate('/dashboard');
+    try {
+      console.log('AuthProvider: Sending login request to', process.env.REACT_APP_API_URL + '/users/login');
+      const response = await api.post('/users/login', { username, password });
+      const user = response.data;
+      console.log('AuthProvider: Login successful', user);
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('AuthProvider: Login failed', error);
+      throw error;
+    }
   };
 
   const register = async (username: string, password: string) => {
-    const response = await api.post('/users', { username, password });
-    const user = response.data;
-    setUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
-    navigate('/dashboard');
+    try {
+      console.log('AuthProvider: Sending registration request to', process.env.REACT_APP_API_URL + '/users');
+      const response = await api.post('/users', { username, password });
+      const user = response.data;
+      console.log('AuthProvider: Registration successful', user);
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('AuthProvider: Registration failed', error);
+      throw error;
+    }
   };
 
   const logout = () => {
+    console.log('AuthProvider: Logging out');
     setUser(null);
     localStorage.removeItem('user');
     navigate('/login');
   };
 
   if (loading) {
-    return null; // Ou un spinner de chargement
+    return null; // Or a spinner
   }
 
   return (

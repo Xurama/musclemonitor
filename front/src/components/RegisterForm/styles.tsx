@@ -40,4 +40,5 @@ export const Error = styled.div`
 
 export const Title = styled.h2`
   color: ${colors.primary};
+  text-align:center;
 `;

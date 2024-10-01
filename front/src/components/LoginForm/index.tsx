@@ -1,10 +1,11 @@
-// src/components/LoginForm/index.tsx
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, Error } from "./styles";
+import { Form, Input, Button, Error, Title } from "./styles";
 import { AuthContext } from "../../context/AuthProvider";
+import { useTranslation } from 'react-i18next';
 
 const LoginForm: React.FC = () => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,35 +13,35 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault();
 
     try {
       console.log("handleLogin()");
-      await login(username, password); // Use login function from context
+      await login(username, password);
       setError("");
       navigate("/dashboard");
     } catch (error) {
-      setError("Login failed. Please try again.");
+      setError(t("login.error"));
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
-      <Form onSubmit={handleLogin}> {/* Set onSubmit event to the form */}
+      <Title>{t('login.title')}</Title>
+      <Form onSubmit={handleLogin}>
         <Input
           type="text"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+          placeholder={t('login.username')}
         />
         <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          placeholder={t('login.password')}
         />
-        <Button type="submit">Login</Button> {/* Ensure button type is submit */}
+        <Button type="submit">{t('login.submit')}</Button>
         {error && <Error>{error}</Error>}
       </Form>
     </div>

@@ -1,0 +1,24 @@
+{
+  "header": {
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "workout": "Workout"
+  },
+  "welcome": "Welcome to MuscleMonitor",
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Login",
+    "error": "Login failed. Please try again."
+  },
+  "register": {
+    "title": "Register",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Register",
+    "passwordMismatch": "Passwords do not match",
+    "error": "Registration failed. Please try again."
+  }
+}

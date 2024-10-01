@@ -12,7 +12,7 @@ export class CreateWorkoutUseCaseImpl implements CreateWorkoutUseCase {
   }
 
   async execute(workout: Entities.Workout): Promise<Entities.Workout> {
-    console.log(`usecase | createWorkout(${workout})`);
+    console.log(`usecase | createWorkout(${JSON.stringify(workout)})`);
     return await this.workoutRepository.createWorkout(workout);
   }
 }

@@ -1,6 +1,6 @@
 // src/components/Modal.tsx
 import React from "react";
-import { ModalOverlay, ModalContent, CloseButton, WorkoutButton, WorkoutList } from './styles';
+import { ModalOverlay, ModalContent, CloseButton } from './styles';
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
+      <ModalContent onClick={(e:any) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         {children}
       </ModalContent>

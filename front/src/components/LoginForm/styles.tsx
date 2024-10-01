@@ -35,6 +35,7 @@ export const Button = styled.button`
 
 export const Title = styled.h2`
   color: ${colors.primary};
+  text-align: center;
 `;
 
 export const Error = styled.div`
