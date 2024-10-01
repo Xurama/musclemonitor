@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "MuscleMonitor",
+  "name": "Get big muscles!",
   "icons": [
     {
       "src": "favicon.ico",

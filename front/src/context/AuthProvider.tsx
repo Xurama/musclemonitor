@@ -41,18 +41,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (username: string, password: string) => {
-    try {
-      console.log('AuthProvider: Sending registration request to', process.env.REACT_APP_API_URL + '/users');
-      const response = await api.post('/users', { username, password });
-      const user = response.data;
-      console.log('AuthProvider: Registration successful', user);
-      setUser(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('AuthProvider: Registration failed', error);
-      throw error;
-    }
+    const response = await api.post('/users/register', { username, password });
+    const user = response.data;
+    setUser(user);
+    localStorage.setItem('user', JSON.stringify(user));
+    navigate('/dashboard');
   };
 
   const logout = () => {

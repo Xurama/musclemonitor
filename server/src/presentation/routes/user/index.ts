@@ -53,7 +53,7 @@ export default function UserRouter(useCases: UseCases): Router {
 
   const userRouter = express.Router({ mergeParams: true });
 
-  userRouter.post('/', validate({ body: Converters.UserConverter.createSchema() }), createUser);
+  userRouter.post('/register', validate({ body: Converters.UserConverter.createSchema() }), createUser);
   userRouter.post('/login', validate({ body: Converters.UserConverter.loginSchema() }), loginUser);
   userRouter.get('/:id', validate({ params: Converters.UserConverter.getSchema() }), getUserById);
 
