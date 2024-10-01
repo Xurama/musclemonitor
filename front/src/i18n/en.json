@@ -20,5 +20,26 @@
     "submit": "Register",
     "passwordMismatch": "Passwords do not match",
     "error": "Registration failed. Please try again."
+  },
+  "workoutForm":{
+    "title": "Add a workout",
+    "load": "Load a previous workout",
+    "selectWorkout": "Select a previous workout",
+    "exercice": {
+      "title": "Exercise",
+      "name": "Exercise Name",
+      "set": "Number of Sets",
+      "rep": "Reps for Each Set",
+      "weight": "Weight for Each Set (kg)",
+      "rest": "Rest Time for Each Set (seconds)",
+      "remove": "Remove exercise",
+      "add": "Add another exercise",
+      "placeholder": {
+        "exerciceName": "Exercise Name",
+        "set": "Sets"
+      }``
+    },
+    "cardioTitle" :"Cardio name",
+    "add": "Add workout"
   }
 }

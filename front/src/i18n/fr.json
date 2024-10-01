@@ -20,5 +20,26 @@
     "submit": "S'inscrire",
     "passwordMismatch": "Les mots de passe ne correspondent pas",
     "error": "Échec de l'inscription. Veuillez réessayer."
+  },
+  "workoutForm":{
+    "title": "Ajouter un entraînement",
+    "load": "Charger un ancien entraînement",
+    "selectWorkout": "Sélectionnez un ancien entraînement",
+    "exercice": {
+      "title": "Exercice",
+      "name": "Nom de l'exercice",
+      "set": "Nombre de séries",
+      "rep": "Nombre de répétitions pour chaque séries",
+      "weight": "Poids pour chaque séries (kg)",
+      "rest": "Temps de repos pour chaque séries (secondes)",
+      "remove": "Supprimer l'exercice",
+      "add": "Ajouter un autre exercice"
+    },
+    "cardioTitle" :"Nom du cardio",
+    "add": "Ajouter l'entraînement",
+    "placeholder": {
+      "exerciceName": "Nom d'exercice",
+      "set": "Séries"
+    }
   }
 }

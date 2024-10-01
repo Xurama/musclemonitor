@@ -119,6 +119,25 @@ export const WorkoutList = styled.ul`
   margin: 0;
 `;
 
+export const ToggleButton = styled.button<{ active: boolean }>`
+  background-color: ${(props) => (props.active ? "#4CAF50" : "#ccc")};
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.active ? "#45a049" : "#bbb")};
+  }
+
+  &:focus {
+    outline: none;
+  }
+`;
+
 export const WorkoutButton = styled.button`
   width: 100%;
   padding: 10px;

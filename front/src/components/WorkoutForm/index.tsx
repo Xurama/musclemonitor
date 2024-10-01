@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 import { api } from "../../core/api";
+import Select from "react-select";
 import { MuscleGroupType } from "@/types/auth";
 import { Workout } from "@/types/workout";
 import Modal from "../Modal";
-import { FaDumbbell } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import {
   Form,
   Input,
-  Select,
   Button,
   Title,
   ExerciseContainer,
@@ -16,7 +16,9 @@ import {
   Label,
   WorkoutList,
   WorkoutButton,
+  ToggleButton,
 } from "./styles";
+import { FaDumbbell } from "react-icons/fa";
 
 // Utility function to format the date as DD/MM/YYYY
 const formatDate = (dateString: string) => {
@@ -26,6 +28,7 @@ const formatDate = (dateString: string) => {
 
 const WorkoutForm: React.FC = () => {
   const { user } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   const [date, setDate] = useState("");
   const [workoutName, setWorkoutName] = useState("");
@@ -37,7 +40,9 @@ const WorkoutForm: React.FC = () => {
   ]);
   const [cardioName, setCardioName] = useState("");
   const [activityTime, setActivityTime] = useState(0);
-  const [availableMuscleGroups, setAvailableMuscleGroups] = useState<MuscleGroupType[]>([]);
+  const [availableMuscleGroups, setAvailableMuscleGroups] = useState<
+    MuscleGroupType[]
+  >([]);
   const [previousWorkouts, setPreviousWorkouts] = useState<Workout[]>([]);
   const [notes, setNotes] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +59,9 @@ const WorkoutForm: React.FC = () => {
 
     const fetchPreviousWorkouts = async () => {
       try {
-        const response = await api.get(`/workouts/last?userId=${user?.user.user_id}`);
+        const response = await api.get(
+          `/workouts/last?userId=${user?.user.user_id}`
+        );
         setPreviousWorkouts(response.data);
       } catch (error) {
         console.error("Failed to fetch previous workouts:", error);
@@ -71,7 +78,7 @@ const WorkoutForm: React.FC = () => {
     setIncludeExercises(selectedWorkout.exercises.length > 0);
     setCardioName(selectedWorkout.cardio_exercises?.[0]?.name || "");
     setActivityTime(selectedWorkout.cardio_exercises?.[0]?.activity_time || 0);
-    setMuscleGroups(selectedWorkout.muscle_groups.map(group => group.name));
+    setMuscleGroups(selectedWorkout.muscle_groups.map((group) => group.name));
     setIsModalOpen(false);
   };
 
@@ -155,7 +162,7 @@ const WorkoutForm: React.FC = () => {
       const workoutData = {
         userId: user?.user.user_id,
         date,
-        muscle_groups: muscleGroups.map(name => ({ name })),
+        muscle_groups: muscleGroups.map((name) => ({ name })),
         cardio,
         exercises: includeExercises ? exercises : [],
         cardio_exercises: cardio
@@ -180,7 +187,9 @@ const WorkoutForm: React.FC = () => {
       setMuscleGroups([]);
       setCardio(false);
       setIncludeExercises(false);
-      setExercises([{ name: "", sets: 1, reps: [0], weight: [0], rest_time: [0] }]);
+      setExercises([
+        { name: "", sets: 1, reps: [0], weight: [0], rest_time: [0] },
+      ]);
       setCardioName("");
       setActivityTime(0);
       setNotes("");
@@ -193,15 +202,20 @@ const WorkoutForm: React.FC = () => {
 
   return (
     <Form onSubmit={handleAddWorkout}>
-      <Title>Add a Workout</Title>
-      <Button type="button" onClick={() => setIsModalOpen(true)}>Load Previous Workout</Button>
+      <Title>{t("workoutForm.title")}</Title>
+      <Button type="button" onClick={() => setIsModalOpen(true)}>
+        {t("workoutForm.load")}
+      </Button>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h3>Select a Previous Workout</h3>
+        <h3>{t("workoutForm.selectWorkout")}</h3>
         <WorkoutList>
           {previousWorkouts.map((workout) => (
             <li key={workout.id}>
-              <WorkoutButton type="button" onClick={() => loadPreviousWorkout(workout)}>
+              <WorkoutButton
+                type="button"
+                onClick={() => loadPreviousWorkout(workout)}
+              >
                 {workout.name} - {formatDate(workout.date)}
               </WorkoutButton>
             </li>
@@ -209,59 +223,61 @@ const WorkoutForm: React.FC = () => {
         </WorkoutList>
       </Modal>
 
-      <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-      <Input type="text" placeholder="Workout Name" value={workoutName} onChange={(e) => setWorkoutName(e.target.value)} required />
+      <Input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        required
+      />
+      <Input
+        type="text"
+        placeholder="Workout Name"
+        value={workoutName}
+        onChange={(e) => setWorkoutName(e.target.value)}
+        required
+      />
 
-      <Select multiple value={muscleGroups} onChange={(e) => setMuscleGroups(Array.from(e.target.selectedOptions, option => option.value))}>
-        {availableMuscleGroups.map((group) => (
-          <option key={group.name} value={group.name}>
-            <FaDumbbell /> {group.name}
-          </option>
-        ))}
-      </Select>
+      <Select
+        isMulti
+        options={availableMuscleGroups.map((group) => ({
+          value: group.name,
+          label: group.name,
+          icon: <FaDumbbell />,
+        }))}
+        value={muscleGroups.map((group) => ({ value: group, label: group }))}
+        onChange={(selected) =>
+          setMuscleGroups(selected.map((option) => option.value))
+        }
+        placeholder="Select Muscle Groups"
+      />
 
-      <div>
-        <button
-          type="button"
-          onClick={() => setCardio(!cardio)}
-          style={{
-            backgroundColor: cardio ? "green" : "grey",
-            color: "white",
-            padding: "10px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
+      <div style={{ display: "flex", gap: "10px" }}>
+        <ToggleButton active={cardio} onClick={() => setCardio(!cardio)}>
           {cardio ? "Cardio: ON" : "Cardio: OFF"}
-        </button>
+        </ToggleButton>
 
-        <button
-          type="button"
+        <ToggleButton
+          active={includeExercises}
           onClick={() => setIncludeExercises(!includeExercises)}
-          style={{
-            backgroundColor: includeExercises ? "green" : "grey",
-            color: "white",
-            padding: "10px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
         >
           {includeExercises ? "Exercises: ON" : "Exercises: OFF"}
-        </button>
+        </ToggleButton>
       </div>
 
       {includeExercises && (
         <>
-          <h3>Exercises</h3>
+          <h3>{t("workoutForm.exercice.title")}</h3>
           {exercises.map((exercise, index) => (
             <ExerciseContainer key={index}>
-              <Label>Exercise Name</Label>
+              <Label>{t("workoutForm.exercice.name")}</Label>
               <Input
                 type="text"
                 list="exercise-names"
-                placeholder="Exercise Name"
+                placeholder={t("workoutForm.exercice.placeholder.exerciceName")}
                 value={exercise.name}
-                onChange={(e) => handleExerciseChange(index, "name", e.target.value)}
+                onChange={(e) =>
+                  handleExerciseChange(index, "name", e.target.value)
+                }
                 required
               />
               <datalist id="exercise-names">
@@ -270,16 +286,18 @@ const WorkoutForm: React.FC = () => {
                 <option value="Deadlift" />
               </datalist>
 
-              <Label>Number of Sets</Label>
+              <Label>{t("workoutForm.exercice.set")}</Label>
               <Input
                 type="number"
-                placeholder="Sets"
+                placeholder={t("workoutForm.exercice.placeholder.set")}
                 value={exercise.sets}
-                onChange={(e) => handleExerciseChange(index, "sets", Number(e.target.value))}
+                onChange={(e) =>
+                  handleExerciseChange(index, "sets", Number(e.target.value))
+                }
                 required
               />
 
-              <Label>Reps for Each Set</Label>
+              <Label>{t("workoutForm.exercice.rep")}</Label>
               <RepsContainer>
                 {Array.from({ length: exercise.sets }).map((_, repIndex) => (
                   <Input
@@ -287,13 +305,19 @@ const WorkoutForm: React.FC = () => {
                     type="number"
                     placeholder={`Set ${repIndex + 1}`}
                     value={exercise.reps[repIndex]}
-                    onChange={(e) => handleExerciseChange(index, `reps-${repIndex}`, Number(e.target.value))}
+                    onChange={(e) =>
+                      handleExerciseChange(
+                        index,
+                        `reps-${repIndex}`,
+                        Number(e.target.value)
+                      )
+                    }
                     required
                   />
                 ))}
               </RepsContainer>
 
-              <Label>Weight for Each Set (kg)</Label>
+              <Label>{t("workoutForm.exercice.weight")}</Label>
               <RepsContainer>
                 {Array.from({ length: exercise.sets }).map((_, weightIndex) => (
                   <Input
@@ -301,38 +325,59 @@ const WorkoutForm: React.FC = () => {
                     type="number"
                     placeholder={`Weight Set ${weightIndex + 1}`}
                     value={exercise.weight[weightIndex]}
-                    onChange={(e) => handleExerciseChange(index, `weight-${weightIndex}`, Number(e.target.value))}
+                    onChange={(e) =>
+                      handleExerciseChange(
+                        index,
+                        `weight-${weightIndex}`,
+                        Number(e.target.value)
+                      )
+                    }
                     required
                   />
                 ))}
               </RepsContainer>
 
-              <Label>Rest Time for Each Set (seconds)</Label>
+              <Label>{t("workoutForm.exercice.rest")}</Label>
               <RepsContainer>
-                {Array.from({ length: exercise.sets }).map((_, restTimeIndex) => (
-                  <Input
-                    key={`rest_time-${restTimeIndex}`}
-                    type="number"
-                    placeholder={`Rest Time Set ${restTimeIndex + 1}`}
-                    value={exercise.rest_time[restTimeIndex]}
-                    onChange={(e) => handleExerciseChange(index, `rest_time-${restTimeIndex}`, Number(e.target.value))}
-                    required
-                  />
-                ))}
+                {Array.from({ length: exercise.sets }).map(
+                  (_, restTimeIndex) => (
+                    <Input
+                      key={`rest_time-${restTimeIndex}`}
+                      type="number"
+                      placeholder={`Rest Time Set ${restTimeIndex + 1}`}
+                      value={exercise.rest_time[restTimeIndex]}
+                      onChange={(e) =>
+                        handleExerciseChange(
+                          index,
+                          `rest_time-${restTimeIndex}`,
+                          Number(e.target.value)
+                        )
+                      }
+                      required
+                    />
+                  )
+                )}
               </RepsContainer>
 
               {exercises.length > 1 && (
-                <Button type="button" onClick={() => handleRemoveExercise(index)}>Remove Exercise</Button>
+                <Button
+                  type="button"
+                  onClick={() => handleRemoveExercise(index)}
+                >
+                  {t("workoutForm.exercice.remove")}
+                </Button>
               )}
             </ExerciseContainer>
           ))}
-          <Button type="button" onClick={handleAddExercise}>Add Another Exercise</Button>
+          <Button type="button" onClick={handleAddExercise}>
+            {t("workoutForm.exercice.add")}
+          </Button>
         </>
       )}
 
       {cardio && (
         <>
-          <h3>Cardio Exercise</h3>
+          <h3>{t("workoutForm.cardioTitle")}</h3>
           <Input
             type="text"
             placeholder="Cardio Name"
@@ -358,7 +403,7 @@ const WorkoutForm: React.FC = () => {
         </>
       )}
 
-      <Button type="submit">Add Workout</Button>
+      <Button type="submit">{t("workoutForm.add")}</Button>
     </Form>
   );
 };
